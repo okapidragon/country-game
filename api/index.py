@@ -1,6 +1,8 @@
 import random
 import requests
 global random_country
+import tkinter as tk
+from tkinter import ttk
 random_country = ""
 def isindependent():
         global reresponse
