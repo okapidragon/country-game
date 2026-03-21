@@ -1,0 +1,4 @@
+flask
+vercel
+vercel-blob
+requests
