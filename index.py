@@ -22,6 +22,7 @@ def countrypicker():
         country_names = [country["name"]["common"] for country in countries]
         random_country = random.choice(country_names)
         isindependent()
+@app.route('/', methods=['GET', 'POST'])
 def home():
         def go():
             countrypicker()
