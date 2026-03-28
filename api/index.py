@@ -1,5 +1,6 @@
 import random
 import requests
+import os
 global random_country
 import tkinter as tk
 from tkinter import ttk
