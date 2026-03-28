@@ -7,6 +7,7 @@ template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'template
 app = Flask(__name__, template_folder=template_dir)
 @app.route('/submit', methods=['GET', 'POST'])
 def home():
+        output_message = ""
         if request.method == 'POST':
                 def isindependent():
                         global reresponse
