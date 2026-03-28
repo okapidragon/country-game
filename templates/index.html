@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head></head>
-  <body style="text-align:center">
-    <div class="dropdown">
-      <button class="dropbtn">Dropdown</button>
-      <div class="dropdown-content">
-        <a href="#">Easy</a>
-        <a href="#">Medium</a>
-        <a href="#">Hard</a>
-      </div>
-    </div>
-    <input type="text" name="guess" placeholder="Guess a country" style="width: 300px;" required><br>
-  </body>
+<head></head>
+<body>
+    <form method="POST" action="/submit">
+        <div class="dropdown">
+            <button type="button" class="dropbtn" id="display-btn">Select Difficulty</button>
+            <div class="dropdown-content">
+                <a href="#" onclick="updateSelection('Easy')">Easy</a>
+                <a href="#" onclick="updateSelection('Hard')">Hard</a>
+            </div>
+        </div>
+        <input type="hidden" name="difficulty" id="difficulty-hidden" value="Easy">
+        <input type="text" name="guess" placeholder="Guess a country" required>
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        function updateSelection(val) {
+            document.getElementById('difficulty-hidden').value = val;
+            document.getElementById('display-btn').innerText = val;
+        }
+    </script>
+</body>
+</html>
