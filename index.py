@@ -1,15 +1,19 @@
 import os
 import random
 import requests
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for # Combined imports
+
 random_country = ""
 template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
 app = Flask(__name__, template_folder=template_dir)
-@app.route('/submit', methods=['GET', 'POST'])
-from flask import redirect, url_for
+
+# 1. First Route: Redirects home page to /submit
 @app.route('/')
 def index():
     return redirect(url_for('home'))
+
+# 2. Second Route: Your actual game logic
+@app.route('/submit', methods=['GET', 'POST'])
 def home():
         output_message = ""
         if request.method == 'POST':
