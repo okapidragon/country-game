@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
 app = Flask(__name__, template_folder=template_dir)
+@app.route('/submit', methods=['GET', 'POST'])
 random_country = ""
 def isindependent():
         global reresponse
