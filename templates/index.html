@@ -7,12 +7,13 @@
             <button type="button" class="dropbtn" id="display-btn">Select Difficulty</button>
             <div class="dropdown-content">
                 <a href="#" onclick="updateSelection('Easy')">Easy</a>
+                <a href="#" onclick="updateSelection('Medium')">Medium</a>
                 <a href="#" onclick="updateSelection('Hard')">Hard</a>
             </div>
         </div>
         <input type="hidden" name="difficulty" id="difficulty-hidden" value="Easy">
         <input type="text" name="guess" placeholder="Guess a country" required>
-        <button type="submit">Submit</button>
+        <button type="submit">Submit guess</button>
     </form>
     <script>
         function updateSelection(val) {
@@ -20,5 +21,8 @@
             document.getElementById('display-btn').innerText = val;
         }
     </script>
+    {% if result %}
+        <pre style="background: #f4f4f4; padding: 10px;">{{ result }}</pre>
+    {% endif %}
 </body>
 </html>
