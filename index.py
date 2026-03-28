@@ -6,6 +6,10 @@ random_country = ""
 template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
 app = Flask(__name__, template_folder=template_dir)
 @app.route('/submit', methods=['GET', 'POST'])
+from flask import redirect, url_for
+@app.route('/')
+def index():
+    return redirect(url_for('home'))
 def home():
         output_message = ""
         if request.method == 'POST':
