@@ -37,18 +37,20 @@ def home():
                 continent = (((str([recountry["continents"] for recountry in recountries][0]).replace("[", "")).replace("]", "")).replace("'", ""))
                 capital = (((str([recountry["capital"] for recountry in recountries][0]).replace("[", "")).replace("]", "")).replace("'", ""))
                 flag = (((str([recountry["flag"] for recountry in recountries][0]).replace("[", "")).replace("]", "")).replace("'", ""))
-                level = input("Level: Easy, Medium, or Hard ")
-                if level.lower() == "easy":
-                        guessedcountry = input(f"""Guess the country:
+                level = request.form.get("difficulty")
+                if level == "Easy":
+                        output_message = (f"""Guess the country:
         Population: {pop}
         Continent: {continent}
         Capital: {capital}
         Flag: {flag}
         """)
-            if guessedcountry.lower() == random_country.lower():
-                print("Correct!")
-            else:
-                print(f"Sorry, the country was {random_country}")
+                guessedcountry = request.form.get("guess")
+                if guessedcountry.lower() == random_country.lower():
+                        output_message = "Correct!"
+                else:
+                        output_message = f"Sorry, the country was {random_country}"
             else:
                 go()
         go()
+        return render_template("index.html", result=output_message)
