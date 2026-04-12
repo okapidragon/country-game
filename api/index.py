@@ -1,75 +1,63 @@
 import os
 import random
 import requests
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template
 
-# 1. Fix pathing for /api folder
+# 1. Setup pathing for Vercel /api folder structure
 template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
 app = Flask(__name__, template_folder=template_dir)
 
-# 2. Define these at the top level so 'global' has something to find
-random_country = ""
-independent = False
-recountries = []
-re_response = None
+def get_random_independent_country():
+    """
+    Fetches the full list from the API once and picks an independent country.
+    This replaces the 'go()' recursion to prevent 500 errors/timeouts.
+    """
+    try:
+        response = requests.get("https://restcountries.com/v3.1/all?fields=name,independent,population,continents,capital,flag")
+        all_countries = response.json()
+        
+        # Filter the list first so we only pick valid countries
+        independent_list = [c for c in all_countries if c.get("independent")]
+        
+        if not independent_list:
+            return None
+            
+        country = random.choice(independent_list)
+        
+        # Format the data into a clean dictionary for the HTML
+        return {
+            "name": country['name']['common'],
+            "pop": f"{country.get('population', 0):,}", # Formats 1000000 as 1,000,000
+            "continent": country.get('continents', ['Unknown'])[0],
+            "capital": country.get('capital', ['None'])[0],
+            "flag": country.get('flag', '🏳️')
+        }
+    except Exception as e:
+        print(f"API Error: {e}")
+        return None
 
-@app.route('/')
-def index():
-    return redirect(url_for('home'))
-
-@app.route('/submit', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
     output_message = ""
     
-    # We must declare these as global inside the route to use your logic
-    global random_country, independent, recountries, pop, continent, capital, flag
-
     if request.method == 'POST':
-        def isindependent():
-            global re_response, recountries, independent
-            re_response = requests.get(f"https://restcountries.com/v3.1/name/{random_country}")
-            recountries = re_response.json()
-            # Safety check to prevent crash if API returns error
-            if isinstance(recountries, list) and len(recountries) > 0:
-                independent = recountries[0].get("independent", False)
-            else:
-                independent = False
+        # CHECK THE GUESS
+        # We get the 'correct_country' from the hidden input field in your HTML
+        user_guess = request.form.get("guess", "").strip().lower()
+        correct_answer = request.form.get("correct_country", "").strip().lower()
         
-        def countrypicker():
-            global random_country, response, countries, country_names
-            response = requests.get("https://restcountries.com/v3.1/all?fields=name")
-            countries = response.json()
-            country_names = [country["name"]["common"] for country in countries]
-            random_country = random.choice(country_names)
-            isindependent()
+        if user_guess == correct_answer:
+            output_message = f"Correct! It was indeed {correct_answer.title()}."
+        else:
+            output_message = f"Sorry, the country was {correct_answer.title()}."
+            
+        # When showing the result, we don't pick a new country yet 
+        # (The HTML will provide a 'Play Again' link)
+        return render_template("index.html", result=output_message)
 
-        def go():
-            nonlocal output_message 
-            countrypicker()
-            if independent == True:
-                # Using .get() prevents 500 errors if a key is missing
-                data = recountries[0]
-                pop = str(data.get("population", "Unknown"))
-                continent = str(data.get("continents", ["Unknown"])[0])
-                capital = str(data.get("capital", ["Unknown"])[0])
-                flag = str(data.get("flag", ""))
-                
-                level = request.form.get("difficulty")
-                if level == "Easy":
-                    output_message = (f"Pop: {pop}, Continent: {continent}, Cap: {capital}, Flag: {flag}")
-                
-                guessedcountry = request.form.get("guess", "")
-                if guessedcountry.lower() == random_country.lower():
-                    output_message = "Correct!"
-                else:
-                    # If it's not Easy, we just show the name
-                    if level != "Easy":
-                        output_message = f"Sorry, the country was {random_country}"
-                    else:
-                        output_message = f"Sorry, it was {random_country}. {output_message}"
-            else:
-                go() 
-        
-        go()
-        
-    return render_template("index.html", result=output_message)
+    # INITIAL LOAD (GET REQUEST)
+    # Pick the country and pass the data to the template
+    target_country = get_random_independent_country()
+    return render_template("index.html", country=target_country)
+
+# Vercel needs the 'app' variable at the top level
