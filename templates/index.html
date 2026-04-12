@@ -1,48 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>
-    .dropdown { position: relative; display: inline-block; }
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #f9f9f9;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-        z-index: 1;
-    }
-    .dropdown:hover .dropdown-content { display: block; }
-    .dropdown-content a {
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-    }
-    .dropdown-content a:hover { background-color: #f1f1f1; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Guessing Game</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        .dropdown { position: relative; display: inline-block; margin-bottom: 10px; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover { background-color: #f1f1f1; }
+        .hint-box { background: #eef; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .result-box { background: #f4f4f4; padding: 15px; border-left: 5px solid #ccc; margin-top: 20px; }
+        .play-again { display: inline-block; margin-top: 10px; color: blue; text-decoration: none; }
+    </style>
 </head>
 <body>
-    <form method="POST" action="/">
-        <div class="dropdown">
-            <button type="button" class="dropbtn" id="display-btn">Select Difficulty</button>
-            <div class="dropdown-content">
-                <a href="#" onclick="updateSelection('Easy')">Easy</a>
-                <a href="#" onclick="updateSelection('Medium')">Medium</a>
-                <a href="#" onclick="updateSelection('Hard')">Hard</a>
+
+    <h2>Guess the Country!</h2>
+
+    {% if not result %}
+        <form method="POST" action="/">
+            <input type="hidden" name="correct_country" value="{{ country.name }}">
+            
+            <div class="dropdown">
+                <button type="button" class="dropbtn" id="display-btn">Difficulty: Easy</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="updateSelection('Easy')">Easy (Show Clues)</a>
+                    <a href="#" onclick="updateSelection('Hard')">Hard (No Clues)</a>
+                </div>
             </div>
+            
+            <input type="hidden" name="difficulty" id="difficulty-hidden" value="Easy">
+
+            <div class="hint-box" id="clues-section">
+                <p><strong>Clues:</strong></p>
+                <ul>
+                    <li><strong>Continent:</strong> {{ country.continent }}</li>
+                    <li><strong>Capital:</strong> {{ country.capital }}</li>
+                    <li><strong>Population:</strong> {{ country.pop }}</li>
+                    <li><strong>Flag:</strong> {{ country.flag }}</li>
+                </ul>
+            </div>
+
+            <input type="text" name="guess" placeholder="Enter country name..." required autofocus>
+            <button type="submit">Submit Guess</button>
+        </form>
+    {% else %}
+        <div class="result-box">
+            <h3>{{ result }}</h3>
+            <a href="/" class="play-again">Click here to play again</a>
         </div>
-        <input type="hidden" name="difficulty" id="difficulty-hidden" value="Easy">
-        <input type="text" name="guess" placeholder="Guess a country" required>
-        <button type="submit">Submit guess</button>
-    </form>
+    {% endif %}
+
     <script>
         function updateSelection(val) {
             document.getElementById('difficulty-hidden').value = val;
-            document.getElementById('display-btn').innerText = val;
+            document.getElementById('display-btn').innerText = "Difficulty: " + val;
+            
+            // Toggle clue visibility based on difficulty
+            const clues = document.getElementById('clues-section');
+            if (val === 'Hard') {
+                clues.style.display = 'none';
+            } else {
+                clues.style.display = 'block';
+            }
         }
     </script>
-    {% if result %}
-        <pre style="background: #f4f4f4; padding: 10px;">{{ result }}</pre>
-    {% endif %}
 </body>
 </html>
