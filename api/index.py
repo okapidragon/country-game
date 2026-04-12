@@ -11,8 +11,6 @@ def get_random_independent_country():
     try:
         response = requests.get("https://restcountries.com/v3.1/all?fields=name,independent,population,continents,capital,flag")
         all_countries = response.json()
-        
-        # Filter for independent countries
         independent_list = [c for c in all_countries if c.get("independent")]
         
         if not independent_list:
@@ -20,16 +18,15 @@ def get_random_independent_country():
             
         choice = random.choice(independent_list)
         
-        # FIX: We use ['population'] or .get('population') 
-        # specifically to avoid the .pop() function name collision.
+        # Using long, unique keys to avoid built-in method errors
         return {
             "name": choice['name']['common'],
-            "pop": f"{choice.get('population', 0):,}", # The value, formatted with commas
-            "continent": choice.get('continents', ['Unknown'])[0],
-            "capital": choice.get('capital', ['None'])[0],
-            "flag": choice.get('flag', '🏳️')
+            "population_count": f"{choice.get('population', 0):,}", 
+            "continent_name": choice.get('continents', ['Unknown'])[0],
+            "capital_city": choice.get('capital', ['None'])[0],
+            "flag_icon": choice.get('flag', '🏳️')
         }
-    except Exception as e:
+    except Exception:
         return None
 
 @app.route('/', methods=['GET', 'POST'])
