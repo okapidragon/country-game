@@ -8,32 +8,28 @@ template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'te
 app = Flask(__name__, template_folder=template_dir)
 
 def get_random_independent_country():
-    """
-    Fetches the full list from the API once and picks an independent country.
-    This replaces the 'go()' recursion to prevent 500 errors/timeouts.
-    """
     try:
         response = requests.get("https://restcountries.com/v3.1/all?fields=name,independent,population,continents,capital,flag")
         all_countries = response.json()
         
-        # Filter the list first so we only pick valid countries
+        # Filter for independent countries
         independent_list = [c for c in all_countries if c.get("independent")]
         
         if not independent_list:
             return None
             
-        country = random.choice(independent_list)
+        choice = random.choice(independent_list)
         
-        # Format the data into a clean dictionary for the HTML
+        # FIX: We use ['population'] or .get('population') 
+        # specifically to avoid the .pop() function name collision.
         return {
-            "name": country['name']['common'],
-            "pop": f"{country.get('population', 0):,}", # Formats 1000000 as 1,000,000
-            "continent": country.get('continents', ['Unknown'])[0],
-            "capital": country.get('capital', ['None'])[0],
-            "flag": country.get('flag', '🏳️')
+            "name": choice['name']['common'],
+            "pop": f"{choice.get('population', 0):,}", # The value, formatted with commas
+            "continent": choice.get('continents', ['Unknown'])[0],
+            "capital": choice.get('capital', ['None'])[0],
+            "flag": choice.get('flag', '🏳️')
         }
     except Exception as e:
-        print(f"API Error: {e}")
         return None
 
 @app.route('/', methods=['GET', 'POST'])
