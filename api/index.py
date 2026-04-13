@@ -35,8 +35,6 @@ def home():
     level = request.args.get("difficulty") or request.form.get("difficulty") or "Easy"
     
     if request.method == 'POST':
-        # CHECK THE GUESS
-        # We get the 'correct_country' from the hidden input field in the HTML
         user_guess = request.form.get("guess", "").strip().lower()
         correct_answer = request.form.get("correct_country", "").strip().lower()
         
@@ -44,16 +42,16 @@ def home():
             output_message = f"Correct! The country was {correct_answer.title()}!"
         else:
             output_message = f"Sorry, the country was {correct_answer.title()}."
-        return render_template("index.html", result=output_message, level=level)
+            
+        current_country = {
+            "name": correct_answer.title(),
+            "population_count": request.form.get("country_pop"),
+            "continent_name": request.form.get("country_cont"),
+            "capital_city": request.form.get("country_cap"),
+            "flag_icon": request.form.get("country_flag")
+        }
         
-        # When showing the result, we don't pick a new country yet 
-        # (The HTML will provide a 'Play Again' link)
-        return render_template("index.html", result=output_message)
+        return render_template("index.html", result=output_message, level=level, country=current_country)
 
-    # INITIAL LOAD (GET REQUEST)
-    # Pick the country and pass the data to the template
     target_country = get_random_independent_country(level)
     return render_template("index.html", country=target_country, level=level)
-
-
-# Vercel needs the 'app' variable at the top level
