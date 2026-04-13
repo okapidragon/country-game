@@ -68,16 +68,7 @@
 
     <script>
         function updateSelection(val) {
-            document.getElementById('difficulty-hidden').value = val;
-            document.getElementById('display-btn').innerText = "Difficulty: " + val;
-            
-            // Toggle clue visibility based on difficulty
-            const clues = document.getElementById('clues-section');
-            if (val === 'Hard') {
-                clues.style.display = 'none';
-            } else {
-                clues.style.display = 'block';
-            }
+            window.location.href = "/?difficulty=" + val;
         }
     </script>
 </body>
