@@ -55,3 +55,4 @@ def home():
 
     target_country = get_random_independent_country(level)
     return render_template("index.html", country=target_country, level=level)
+app = app
