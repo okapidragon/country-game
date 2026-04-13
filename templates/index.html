@@ -35,6 +35,11 @@
     {% if not result %}
         <form method="POST" action="/">
             <input type="hidden" name="correct_country" value="{{ country.name }}">
+            <input type="hidden" name="difficulty" id="difficulty-hidden" value="Easy">
+            <input type="hidden" name="country_pop" value="{{ country.population_count }}">
+            <input type="hidden" name="country_cont" value="{{ country.continent_name }}">
+            <input type="hidden" name="country_cap" value="{{ country.capital_city }}">
+            <input type="hidden" name="country_flag" value="{{ country.flag_icon }}">
             
             <div class="dropdown">
                 <button type="button" class="dropbtn" id="display-btn">Difficulty: Easy</button>
@@ -44,8 +49,6 @@
                 </div>
             </div>
             
-            <input type="hidden" name="difficulty" id="difficulty-hidden" value="Easy">
-
             <div class="hint-box" id="clues-section">
                 <p><strong>Clues:</strong></p>
                 <ul>
