@@ -9,7 +9,8 @@ app = Flask(__name__, template_folder=template_dir)
 
 def get_random_independent_country(level):
     try:
-        response = requests.get("https://restcountries.com/v3.1/all?fields=name,independent,population,continents,capital,flag")
+            response = requests.get(https://restcountries.com/v5/all?response_fields=names.common,classification.sovereign,demographics.population,geography.continents,capitals,flag.emoji&limit=250',
+            headers={'Authorization': 'Bearer rc_live_9ad44e25448b435e9999a2dffc64817f'})
         all_countries = response.json()
         independent_list = [c for c in all_countries if c.get("independent")]
         
@@ -20,11 +21,11 @@ def get_random_independent_country(level):
         
         # Using long, unique keys to avoid built-in method errors
         return {
-            "name": choice['name']['common'],
-            "population_count": f"{choice.get('population', 0):,}", 
-            "continent_name": choice.get('continents', ['Unknown'])[0],
-            "capital_city": choice.get('capital', ['None'])[0],
-            "flag_icon": choice.get('flag', '🏳️')
+            "name": choice.get('names', {}).get('common', 'Unknown'),
+            "population_count": f"{choice.get('demographics', {}).get('population', 0):,}", 
+            "continent_name": choice.get('geography', {}).get('continents', ['Unknown'])[0],
+            "capital_city": choice.get('capitals', ['None'])[0],
+            "flag_icon": choice.get('flag', {}).get('emoji', '🏳️')
         }
     except Exception:
         return None
