@@ -9,11 +9,10 @@ app = Flask(__name__, template_folder=template_dir)
 
 def get_random_independent_country(level):
     try:
-        response = requests.get(
-            'https://restcountries.com/v5/all?response_fields=names.common,classification.sovereign,demographics.population,geography.continents,capitals,flag.emoji&limit=250',
-            headers={'Authorization': 'Bearer rc_live_9ad44e25448b435e9999a2dffc64817f'})
+        response = requests.get('https://restcountries.com/v5/all?response_fields=names.common,classification.sovereign,demographics.population,geography.continents,capitals,flag.emoji&limit=250',
+                                headers={'Authorization': 'Bearer rc_live_9ad44e25448b435e9999a2dffc64817f'})
         all_countries = response.json().get('data', [])
-        independent_list = [c for c in all_countries if c.get("classification", {}).get("sovereign")]
+        independent_list = [c for c in all_countries if c.get("independent")]
         
         if not independent_list:
             return None
